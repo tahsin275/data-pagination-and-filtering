@@ -6,6 +6,8 @@ FSJS Project 2 - Data Pagination and Filtering
 // caching the dom elements
 const stdList = document.querySelector('.student-list');
 const pagination = document.querySelector('.link-list');
+const searchBar = document.querySelector('.student-search');
+const input = document.querySelector('#search');
 let activePage = 1;
 
 
@@ -20,7 +22,7 @@ function showPage(list, page){
       const li = `
          <li class="student-item cf">
             <div class="student-details">
-            <img class="avatar" src=${list[i].picture.thumbnail} alt="Profile Picture">
+            <img class="avatar" src=${list[i].picture.large} alt="Profile Picture">
             <h3>${list[i].name.first + " " + list[i].name.last}</h3>
             <span class="email">${list[i].email}</span>
             </div>
@@ -41,6 +43,7 @@ Create the `addPagination` function
 This function will create and insert/append the elements needed for the pagination buttons
 */
 function addPagination(list){
+   pagination.innerHTML = '';
    const totalPages = Math.ceil(list.length / 9);
    for (let i = 1; i <= totalPages; i++){
       const button = `
@@ -53,12 +56,16 @@ function addPagination(list){
 }
 
 // render function
-function render(){
+// evoke the showpage functionality 
+// and render the page
+function render(list){
    stdList.innerHTML = '';
-   showPage(data,activePage);
+   showPage(list,activePage);
 }
 
-// Event listener
+// Event listener //
+
+//pagination data change and active page event
 pagination.addEventListener('click',(e) => {
    const buttons = pagination.children;
    if(e.target.type == "button"){
@@ -67,15 +74,65 @@ pagination.addEventListener('click',(e) => {
       }
       e.target.classList.add('active');
       activePage = e.target.innerText;
-      render();
+      render(data);
    }
   
 })
+
+//search functionality
+
+//this event fires when user press the search button
+searchBar.addEventListener('click', (e)=>{
+   if(e.target.tagName == 'BUTTON' || e.target.tagName == 'IMG'){
+      const searchStr = input.value.toLowerCase();
+      const searchArr = [];
+      for (let i = 0; i < data.length; i++){
+         if(data[i].name.first.toLowerCase().includes(searchStr) || data[i].name.last.toLowerCase().includes(searchStr)){
+            searchArr.push(data[i]);
+         }
+      }
+      if(searchArr.length>0){
+         addPagination(searchArr);
+         render(searchArr);
+         console.log(searchArr);
+      }
+      else {
+         stdList.innerHTML = `
+            <li>NO DATA FOUND!</li>
+         `;
+         pagination.innerHTML = '';
+      }
+   }  
+})
+
+//this event fires when user start typing
+input.addEventListener('keyup', ()=>{
+
+      const searchStr = input.value.toLowerCase();
+      const searchArr = [];
+      for (let i = 0; i < data.length; i++){
+         if(data[i].name.first.toLowerCase().includes(searchStr) || data[i].name.last.toLowerCase().includes(searchStr)){
+            searchArr.push(data[i]);
+         }
+      }
+      if(searchArr.length>0){
+         addPagination(searchArr);
+         render(searchArr);
+         console.log(searchArr);
+      }
+      else {
+         stdList.innerHTML = `
+            <li>NO DATA FOUND!</li>
+         `;
+         pagination.innerHTML = '';
+      }
+   }
+)
 
 
 
 
 
 // Call functions
-showPage(data,activePage);
+render(data);
 addPagination(data);
