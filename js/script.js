@@ -4,11 +4,22 @@ FSJS Project 2 - Data Pagination and Filtering
 */
 
 // caching the dom elements
+const header = document.querySelector('.header');
 const stdList = document.querySelector('.student-list');
 const pagination = document.querySelector('.link-list');
-const searchBar = document.querySelector('.student-search');
-const input = document.querySelector('#search');
 let activePage = 1;
+
+// Adding Search Markup in the HTML
+const searchMarkup = document.createElement('form');
+searchMarkup.innerHTML = `
+   <label for="search" class="student-search">
+   <span>Search by name</span>
+   <input id="search" placeholder="Search by name...">
+   <button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
+   </label>
+`;
+
+header.appendChild(searchMarkup);
 
 
 /*
@@ -57,7 +68,7 @@ function addPagination(list){
 
 // render function
 // evoke the showpage functionality 
-// and render the page
+//and render the page
 function render(list){
    stdList.innerHTML = '';
    showPage(list,activePage);
@@ -75,11 +86,13 @@ pagination.addEventListener('click',(e) => {
       e.target.classList.add('active');
       activePage = e.target.innerText;
       render(data);
-   }
-  
+   } 
 })
 
-//search functionality
+//search functionality implementation
+
+const searchBar = document.querySelector('.student-search');
+const input = document.querySelector('#search');
 
 //this event fires when user press the search button
 searchBar.addEventListener('click', (e)=>{
@@ -94,7 +107,6 @@ searchBar.addEventListener('click', (e)=>{
       if(searchArr.length>0){
          addPagination(searchArr);
          render(searchArr);
-         console.log(searchArr);
       }
       else {
          stdList.innerHTML = `
@@ -118,7 +130,6 @@ input.addEventListener('keyup', ()=>{
       if(searchArr.length>0){
          addPagination(searchArr);
          render(searchArr);
-         console.log(searchArr);
       }
       else {
          stdList.innerHTML = `
